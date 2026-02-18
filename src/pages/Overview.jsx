@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import useWebSocketStore from '../store/websocketStore'
 import Heatmap from '../components/Heatmap'
 import ExpirySelector from '../components/ExpirySelector'
+import IndexSelector from '../components/IndexSelector'
 import EmailAlerts from '../components/EmailAlerts'
 import { formatTime } from '../utils/formatters'
 import '../styles/layout.css'
@@ -11,7 +12,7 @@ import '../styles/layout.css'
 const Overview = () => {
   const navigate = useNavigate()
   const [riskFilter, setRiskFilter] = useState('all')
-  
+
   const { liveData, selectedExpiry, alerts, lastUpdated, isConnected } = useWebSocketStore()
   const currentOptions = liveData[selectedExpiry] ?? []
 
@@ -33,12 +34,12 @@ const Overview = () => {
         <header className="page-header">
           <div className="header-top">
             <h1 className="header-title">Options Risk Monitor</h1>
-            
+
             <div className="header-controls">
               <div className="status-badge">
                 {lastUpdated ? formatTime(lastUpdated) : '--:--'}
               </div>
-              
+
               <div className="status-badge">
                 <span className={`status-indicator ${isConnected ? 'live' : 'offline'}`} />
                 {isConnected ? 'Live' : 'Disconnected'}
@@ -57,22 +58,30 @@ const Overview = () => {
           </div>
           {/* Alert Banner */}
           {alerts.length > 0 && (
-            <div className="alert-banner" onClick={() => navigate('/alerts')}>
+            <div className="alert-banner">
               <div className="alert-content">
                 <span className="status-indicator live" />
                 <span className="alert-text">
                   {alerts.length} option{alerts.length > 1 ? 's' : ''} in high risk zone
                 </span>
               </div>
-              <span className="alert-link">View All →</span>
             </div>
           )}
         </header>
 
-        {/* Expiry Selector */}
-        <div className="expiry-selector">
-          <ExpirySelector />
+        {/* Index & Expiry Selectors */}
+        <div className="w-full flex justify-center mt-4">
+          <div className="flex gap-2">
+            <div className="index-selector">
+              <IndexSelector />
+            </div>
+            <div className="expiry-selector">
+              <ExpirySelector />
+            </div>
+          </div>
         </div>
+
+
 
         {/* Risk Filter */}
         <div className="filter-container">

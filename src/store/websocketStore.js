@@ -9,11 +9,11 @@ const useWebSocketStore = create((set) => ({
   // Expiry
   availableExpiries: [],
   selectedExpiry: null,
-
-  // Live data per expiry
-  // { "2025-02-20": [ ...40 options ] }
   liveData: {},
 
+  availableIndices: ['NIFTY', 'BANKNIFTY', 'SENSEX'],
+  selectedIndex: 'NIFTY',
+  setSelectedIndex: (index) => set({ selectedIndex: index }),
   // Alerts (risk > 75)
   alerts: [],
 

@@ -15,3 +15,14 @@ export const formatRisk = (score) =>
 
 export const formatLTP = (ltp) =>
   ltp.toFixed(2)
+
+
+// src/utils/formatters.js
+export const formatIndex = (index) => {
+  const map = {
+    NIFTY: 'Nifty 50',
+    BANKNIFTY: 'Nifty Bank',
+    SENSEX: 'Sensex'
+  };
+  return map[index] || index;
+};
