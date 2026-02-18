@@ -1,0 +1,369 @@
+/* src/styles/detail.css */
+
+/* Detail Page Layout */
+.detail-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem;
+  min-height: 100vh;
+}
+
+/* Navigation */
+.back-navigation {
+  margin-bottom: 5cm;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #737373;
+  background: none;
+  border: none;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 0;
+}
+
+.back-button:hover {
+  color: #ffffff;
+}
+
+/* Stats Section */
+.stats-section {
+  margin-bottom: 4cm;
+}
+
+.detail-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.detail-stat-card {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 1rem;
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.detail-stat-card:hover {
+  border-color: #3b82f6;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(59, 130, 246, 0.15);
+}
+
+.detail-stat-card.risk-card {
+  border-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.detail-stat-card.risk-card:hover {
+  transform: scale(1.05);
+}
+
+.detail-stat-label {
+  color: #737373;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.875rem;
+  font-weight: 500;
+}
+
+.detail-stat-value {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.detail-stat-value.large {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* Chart Controls */
+.chart-controls-section {
+  margin-bottom: 2.5rem;
+}
+
+.range-selector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.range-button-group {
+  display: inline-flex;
+  gap: 0.375rem;
+  background: #141414;
+  padding: 0.375rem;
+  border-radius: 0.75rem;
+  border: 1px solid #2a2a2a;
+}
+
+.range-button {
+  padding: 0.625rem 1.5rem;
+  border: none;
+  background: transparent;
+  color: #737373;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 70px;
+}
+
+.range-button:hover {
+  color: #ffffff;
+  background: #1a1a1a;
+}
+
+.range-button.active {
+  background: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Chart Tabs */
+.chart-tabs {
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 2.5rem;
+}
+
+.chart-tab {
+  padding: 1rem 2rem;
+  border: none;
+  background: none;
+  color: #737373;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  text-transform: capitalize;
+}
+
+.chart-tab:hover {
+  color: #ffffff;
+}
+
+.chart-tab.active {
+  color: #ffffff;
+}
+
+.chart-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #3b82f6;
+  border-radius: 2px 2px 0 0;
+}
+
+/* Chart Container */
+.chart-container {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 1.25rem;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.chart-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1.5rem;
+}
+
+.spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid #2a2a2a;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: #737373;
+  font-size: 0.9375rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .detail-container {
+    padding: 2rem 1.5rem;
+  }
+
+  .back-navigation {
+    margin-bottom: 3cm;
+  }
+
+  .stats-section {
+    margin-bottom: 3cm;
+  }
+
+  .detail-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chart-container {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .detail-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .back-navigation {
+    margin-bottom: 2cm;
+  }
+
+  .stats-section {
+    margin-bottom: 2cm;
+  }
+
+  .detail-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .chart-tabs {
+    overflow-x: auto;
+  }
+
+  .chart-tab {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  .range-button-group {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .range-button {
+    flex: 1;
+    min-width: unset;
+  }
+
+  .chart-container {
+    padding: 1.5rem 1rem;
+  }
+}
+
+/* Chart Builder Styles */
+.chart-builder {
+  width: 100%;
+}
+
+.metric-selector {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #0a0a0a;
+  border-radius: 0.75rem;
+  border: 1px solid #2a2a2a;
+}
+
+.metric-selector-label {
+  color: #737373;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.metric-button {
+  padding: 0.625rem 1.25rem;
+  border: 1px solid #2a2a2a;
+  background: #141414;
+  color: #737373;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.metric-button:hover {
+  border-color: #3b82f6;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.metric-button.active {
+  border-width: 2px;
+  font-weight: 600;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #737373;
+  font-size: 0.9375rem;
+}
+
+.chart-tooltip {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.tooltip-time {
+  color: #737373;
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.tooltip-value {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0.25rem 0;
+}
+
+@media (max-width: 640px) {
+  .metric-buttons {
+    gap: 0.5rem;
+  }
+
+  .metric-button {
+    flex: 1 1 calc(50% - 0.25rem);
+    min-width: 0;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
