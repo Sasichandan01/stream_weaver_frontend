@@ -7,31 +7,47 @@ const HeatmapCell = memo(({ option, onClick, expiry }) => {
 
   return (
     <div
-      onClick={() => onClick(option.strike, expiry)}
-      className="rounded-lg p-3 cursor-pointer border border-[#2a2a2a] 
-                 hover:scale-105 transition-transform flex flex-col gap-1"
+      onClick={() => onClick(option.symbol, expiry)}
+      className="heatmap-cell"
       style={{ backgroundColor: `${bgColor}18` }}
     >
-      <p className="text-white text-xs font-semibold">{option.strike}</p>
-      <p className="text-lg font-bold" style={{ color: bgColor }}>
-        {option.risk}
+      <p className="heatmap-strike">{option.symbol}</p>
+      <p className="heatmap-risk" style={{ color: bgColor }}>
+        {option.risk?.toFixed(1) || "--"}
       </p>
-      <p className="text-[#737373] text-xs">{option.recommendation}</p>
+      <p className="heatmap-price">
+        ₹{option.ltp?.toFixed(2) || option.price?.toFixed(2) || "--"}
+      </p>
+      <p className="heatmap-action">{option.recommendation}</p>
     </div>
-  )
+  );
 })
 
 const Heatmap = ({ options, onOptionClick, expiry }) => {
-  const ceOptions = options.filter(o => o.strike.endsWith('CE'))
-  const peOptions = options.filter(o => o.strike.endsWith('PE'))
+   console.log("🔍 Heatmap received:", { options, expiry });
+
+   if (!options || !Array.isArray(options)) {
+     console.error("❌ Invalid options data:", options);
+     return <div className="text-white p-4">No options data available</div>;
+   }
+
+   const ceOptions = options.filter((o) => o.symbol?.endsWith("CE"));
+   const peOptions = options.filter((o) => o.symbol?.endsWith("PE"));
+
+   console.log(
+     "CE options:",
+     ceOptions.length,
+     "PE options:",
+     peOptions.length,
+   );
 
   return (
-    <div className="flex gap-4">
+    <div className="heatmap-container">
 
       {/* CE Options - Left Side */}
-      <div className="flex-1 border-r-2 border-[#2a2a2a] pr-4">
-        <p className="text-[#737373] text-xs mb-2 uppercase tracking-wider">Call Options (CE)</p>
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
+      <div className="heatmap-section heatmap-section-left">
+        <p className="heatmap-label">Call Options (CE)</p>
+        <div className="heatmap-grid">
           {ceOptions.map(option => (
             <HeatmapCell key={option.strike} option={option} onClick={onOptionClick} expiry={expiry} />
           ))}
@@ -39,9 +55,9 @@ const Heatmap = ({ options, onOptionClick, expiry }) => {
       </div>
 
       {/* PE Options - Right Side */}
-      <div className="flex-1 border-l-2 border-[#2a2a2a] pl-4">
-        <p className="text-[#737373] text-xs mb-2 uppercase tracking-wider">Put Options (PE)</p>
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
+      <div className="heatmap-section heatmap-section-right">
+        <p className="heatmap-label">Put Options (PE)</p>
+        <div className="heatmap-grid">
           {peOptions.map(option => (
             <HeatmapCell key={option.strike} option={option} onClick={onOptionClick} expiry={expiry} />
           ))}

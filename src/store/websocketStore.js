@@ -1,57 +1,125 @@
 // src/store/websocketStore.js
 import { create } from 'zustand'
 
-const useWebSocketStore = create((set) => ({
-  // Connection state
+const useWebSocketStore = create((set, get) => ({
+  // Connection
   isConnected: false,
-  lastUpdated: null,
+  ws: null,
 
-  // Expiry
+  // Snapshot data (from WebSocket)
+  expiries: {},
+  timestamp: null,
   availableExpiries: [],
   selectedExpiry: null,
-  liveData: {},
-
-  availableIndices: ['NIFTY', 'BANKNIFTY', 'SENSEX'],
-  selectedIndex: 'NIFTY',
-  setSelectedIndex: (index) => set({ selectedIndex: index }),
-  // Alerts (risk > 75)
   alerts: [],
 
+  // Active selection
+  activeSymbol: null,
+  activeExpiry: null,
+  activeRange: '1D',
+
+  // Chart data (from /api/history)
+  chartData: [],
+
+  // Live Greeks (from WebSocket greeks updates)
+  liveGreeks: null,
+
+  // Request ID for stale response handling
+  reqId: 0,
+
   // Actions
+  setWebSocket: (ws) => set({ ws }),
+  
   setConnected: (status) => set({ isConnected: status }),
 
   setSelectedExpiry: (expiry) => set({ selectedExpiry: expiry }),
 
-  updateLiveData: (payload) => set((state) => {
-    const expiries = Object.keys(payload.expiries)
+  incrementReqId: () => set((state) => ({ reqId: state.reqId + 1 })),
 
-    // Extract alerts across all expiries
+  // Handle snapshot from WebSocket
+  handleSnapshot: (data) => set((state) => {
+    const expiryKeys = Object.keys(data.expiries)
+    
+    // Transform data
+    const transformedExpiries = {}
     const alerts = []
-    expiries.forEach((expiry) => {
-      payload.expiries[expiry].forEach((option) => {
-        if (option.risk > 75) {
-          alerts.push({ ...option, expiry })
+
+    expiryKeys.forEach((expiry) => {
+      transformedExpiries[expiry] = data.expiries[expiry].map(option => ({
+        symbol: option.symbol,
+        strike: option.strike,
+        type: option.type,
+        ltp: option.price,
+        risk: option.risk_score,
+        recommendation: option.recommendation,
+      }))
+
+      // Extract alerts
+      data.expiries[expiry].forEach((option) => {
+        if (option.risk_score > 75) {
+          alerts.push({
+            symbol: option.symbol,
+            strike: option.strike,
+            expiry,
+            risk: option.risk_score,
+            recommendation: option.recommendation
+          })
         }
       })
     })
 
     return {
-      liveData: payload.expiries,
-      availableExpiries: expiries,
-      selectedExpiry: state.selectedExpiry ?? expiries[0],
-      lastUpdated: payload.timestamp,
-      alerts,
+      expiries: transformedExpiries,
+      timestamp: data.timestamp,
+      availableExpiries: expiryKeys,
+      selectedExpiry: state.selectedExpiry || expiryKeys[0],
+      alerts
     }
   }),
 
-  // Clear on disconnect
+  // Handle live Greeks update from WebSocket
+  handleGreeks: (data) => set({ liveGreeks: data }),
+
+  // Set chart data from API
+  setChartData: (data) => set({ chartData: data }),
+
+  // Set active selection
+  setActiveOption: (symbol, expiry, range = '1D') => set({
+    activeSymbol: symbol,
+    activeExpiry: expiry,
+    activeRange: range
+  }),
+
+  // Subscribe to option
+  subscribeToOption: (symbol, expiry) => {
+    const { ws } = get()
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ subscribe: symbol, expiry }))
+      console.log('📡 Subscribed to:', symbol, expiry)
+    }
+  },
+
+  // Unsubscribe
+  unsubscribe: () => {
+    const { ws } = get()
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ unsubscribe: true }))
+      console.log('📡 Unsubscribed from live updates')
+    }
+  },
+
+  // Reset
   reset: () => set({
     isConnected: false,
-    liveData: {},
-    alerts: [],
+    expiries: {},
+    timestamp: null,
     availableExpiries: [],
     selectedExpiry: null,
-    lastUpdated: null,
+    alerts: [],
+    activeSymbol: null,
+    activeExpiry: null,
+    chartData: [],
+    liveGreeks: null,
   }),
 }))
 

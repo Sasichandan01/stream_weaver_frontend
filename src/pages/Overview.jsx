@@ -1,113 +1,97 @@
 // src/pages/Overview.jsx
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import useWebSocketStore from '../store/websocketStore'
-import Heatmap from '../components/Heatmap'
-import ExpirySelector from '../components/ExpirySelector'
-import IndexSelector from '../components/IndexSelector'
-import EmailAlerts from '../components/EmailAlerts'
-import { formatTime } from '../utils/formatters'
-import '../styles/layout.css'
+import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import useWebSocketStore from "../store/websocketStore";
+import Heatmap from "../components/Heatmap";
+import ExpirySelector from "../components/ExpirySelector";
+import EmailAlerts from "../components/EmailAlerts";
+import { formatTime } from "../utils/formatters";
+import "../styles/layout.css";
 
 const Overview = () => {
-  const navigate = useNavigate()
-  const [riskFilter, setRiskFilter] = useState('all')
+  const navigate = useNavigate();
+  const [riskFilter, setRiskFilter] = useState("all");
 
-  const { liveData, selectedExpiry, alerts, lastUpdated, isConnected } = useWebSocketStore()
-  const currentOptions = liveData[selectedExpiry] ?? []
+  // Separate selectors - stable
+  const expiries = useWebSocketStore((state) => state.expiries);
+  const selectedExpiry = useWebSocketStore((state) => state.selectedExpiry);
+  const alerts = useWebSocketStore((state) => state.alerts);
+  const timestamp = useWebSocketStore((state) => state.timestamp);
+  const isConnected = useWebSocketStore((state) => state.isConnected);
 
-  const filteredOptions = currentOptions.filter(option => {
-    if (riskFilter === 'safe') return option.risk <= 50
-    if (riskFilter === 'high') return option.risk > 75
-    return true
-  })
+  const currentOptions = expiries?.[selectedExpiry] || [];
 
-  const handleOptionClick = (strike, expiry) => {
-    navigate(`/option/${strike}/${expiry}`)
-  }
+  const filteredOptions = currentOptions.filter((option) => {
+    if (riskFilter === "safe") return option.risk <= 50;
+    if (riskFilter === "high") return option.risk > 75;
+    return true;
+  });
+
+  const handleOptionClick = useCallback(
+    (symbol, expiry) => {
+      const store = useWebSocketStore.getState();
+      store.setActiveOption(symbol, expiry, "1D");
+      store.subscribeToOption(symbol, expiry);
+      navigate(`/option/${symbol}/${expiry}`);
+    },
+    [navigate],
+  );
 
   return (
     <div className="page-container">
       <div className="content-wrapper">
-
-        {/* Header Section */}
         <header className="page-header">
           <div className="header-top">
             <h1 className="header-title">Options Risk Monitor</h1>
-
             <div className="header-controls">
+              <EmailAlerts />
               <div className="status-badge">
-                {lastUpdated ? formatTime(lastUpdated) : '--:--'}
+                {timestamp ? formatTime(timestamp) : "--:--"}
               </div>
-
               <div className="status-badge">
-                <span className={`status-indicator ${isConnected ? 'live' : 'offline'}`} />
-                {isConnected ? 'Live' : 'Disconnected'}
+                <span
+                  className={`status-indicator ${isConnected ? "live" : "offline"}`}
+                />
+                {isConnected ? "Live" : "Disconnected"}
               </div>
             </div>
           </div>
-          <div className="header-controls">
-            <EmailAlerts />
-            <div className="status-badge">
-              {lastUpdated ? formatTime(lastUpdated) : '--:--'}
-            </div>
-            <div className="status-badge">
-              <span className={`status-indicator ${isConnected ? 'live' : 'offline'}`} />
-              {isConnected ? 'Live' : 'Disconnected'}
-            </div>
-          </div>
-          {/* Alert Banner */}
           {alerts.length > 0 && (
             <div className="alert-banner">
               <div className="alert-content">
                 <span className="status-indicator live" />
                 <span className="alert-text">
-                  {alerts.length} option{alerts.length > 1 ? 's' : ''} in high risk zone
+                  {alerts.length} option{alerts.length > 1 ? "s" : ""} in high
+                  risk zone
                 </span>
               </div>
+
             </div>
           )}
         </header>
 
-        {/* Index & Expiry Selectors */}
-        <div className="w-full flex justify-center mt-4">
-          <div className="flex gap-2">
-            <div className="index-selector">
-              <IndexSelector />
-            </div>
-            <div className="expiry-selector">
-              <ExpirySelector />
-            </div>
-          </div>
+        <div className="expiry-selector">
+          <ExpirySelector />
         </div>
 
-
-
-        {/* Risk Filter */}
         <div className="filter-container">
           <div className="filter-group">
-            <button
-              onClick={() => setRiskFilter('all')}
-              className={`filter-button ${riskFilter === 'all' ? 'active' : ''}`}
-            >
-              All Options
-            </button>
-            <button
-              onClick={() => setRiskFilter('safe')}
-              className={`filter-button ${riskFilter === 'safe' ? 'active' : ''}`}
-            >
-              Safe (≤50)
-            </button>
-            <button
-              onClick={() => setRiskFilter('high')}
-              className={`filter-button ${riskFilter === 'high' ? 'active' : ''}`}
-            >
-              High Risk (>75)
-            </button>
+            {["all", "safe", "high"].map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setRiskFilter(filter)}
+                className={`filter-button ${riskFilter === filter ? "active" : ""}`}
+              >
+                {filter === "all"
+                  ? "All Options"
+                  : filter === "safe"
+                    ? "Safe (≤50)"
+                    : "High Risk (>75)"}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Heatmap */}
         <section className="section-gap-lg">
           <Heatmap
             options={filteredOptions}
@@ -115,11 +99,9 @@ const Overview = () => {
             expiry={selectedExpiry}
           />
         </section>
-
-
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Overview
+export default Overview;
