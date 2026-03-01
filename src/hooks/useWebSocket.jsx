@@ -1,47 +1,52 @@
 // src/hooks/useWebSocket.js
-import { useEffect, useRef } from 'react'
-import useWebSocketStore from '../store/websocketStore'
+import { useEffect, useRef } from "react";
+import useWebSocketStore from "../store/websocketStore";
 
-const WS_URL = 'ws://your-backend-url/ws' // replace with your URL
+const WS_URL = import.meta.env.VITE_WS_URL || "ws://localhost:8000/ws";
 
-const useWebSocket = () => {
-  const wsRef = useRef(null)
-  const { setConnected, updateLiveData, reset } = useWebSocketStore()
+const useWebSocket = (enabled = true) => {
+  const wsRef = useRef(null);
+  const reconnectRef = useRef(null);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const connect = () => {
-      wsRef.current = new WebSocket(WS_URL)
+      if (wsRef.current?.readyState === WebSocket.OPEN) return;
+
+      wsRef.current = new WebSocket(WS_URL);
 
       wsRef.current.onopen = () => {
-        console.log('WebSocket connected')
-        setConnected(true)
-      }
+        useWebSocketStore.getState().setConnected(true);
+        useWebSocketStore.getState().setWebSocket(wsRef.current);
+      };
 
       wsRef.current.onmessage = (event) => {
-        const payload = JSON.parse(event.data)
-        updateLiveData(payload)
-      }
+        const data = JSON.parse(event.data);
+        const store = useWebSocketStore.getState();
+
+        if (data.type === "snapshot" || data.expiries) {
+          store.handleSnapshot(data);
+        } else if (data.type === "greeks") {
+          store.handleGreeks(data);
+        }
+      };
 
       wsRef.current.onclose = () => {
-        console.log('WebSocket disconnected, retrying...')
-        setConnected(false)
-        // Auto reconnect after 3 seconds
-        setTimeout(connect, 3000)
-      }
+        useWebSocketStore.getState().setConnected(false);
+        reconnectRef.current = setTimeout(connect, 3000);
+      };
 
-      wsRef.current.onerror = (error) => {
-        console.error('WebSocket error:', error)
-        wsRef.current.close()
-      }
-    }
+      wsRef.current.onerror = () => wsRef.current?.close();
+    };
 
-    connect()
+    connect();
 
     return () => {
-      wsRef.current?.close()
-      reset()
-    }
-  }, [])
-}
+      clearTimeout(reconnectRef.current);
+      wsRef.current?.close();
+    };
+  }, [enabled]);
+};
 
-export default useWebSocket
+export default useWebSocket;

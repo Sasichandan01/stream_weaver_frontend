@@ -29,6 +29,19 @@ body {
   border-radius: 2px;
 }
 
+.spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid #2a2a2a;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 
 @theme {
