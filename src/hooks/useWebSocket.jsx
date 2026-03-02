@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import useWebSocketStore from "../store/websocketStore";
 
 const WS_URL =
-  import.meta.env.VITE_WS_URL || "ws://riskmonitorapi2232.duckdns.org:8000/ws";
+  import.meta.env.VITE_WS_URL || "wss://riskmonitorapi2232.duckdns.org:8000/ws";
 
 const useWebSocket = (enabled = true) => {
   const wsRef = useRef(null);
