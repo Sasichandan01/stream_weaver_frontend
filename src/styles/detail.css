@@ -367,3 +367,78 @@
     font-size: 0.8125rem;
   }
 }
+
+/* Mobile styles - only apply below 768px */
+@media (max-width: 768px) {
+  /* Heatmap - reduce to 3 options per row on mobile */
+  .heatmap-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    padding: 4px !important;
+  }
+  
+  .heatmap-cell {
+    min-width: unset !important;
+    padding: 8px 4px !important;
+    margin: 0 !important;
+  }
+  
+  .heatmap-section {
+    margin-bottom: 24px !important;
+  }
+  
+  /* Chart - full width, no padding/borders on sides */
+  .chart-container {
+    margin-left: -1.25rem !important;  /* Increased from -1rem */
+    margin-right: -1.25rem !important; /* Increased from -1rem */
+    padding: 0.75rem 0 !important;     /* Reduced vertical padding */
+    width: calc(100% + 2.5rem) !important; /* Matches new margins */
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+  }
+  
+  /* Chart metric selector - reduce padding */
+  .metric-selector {
+    margin: 0 1rem 1rem 1rem !important;
+    padding: 0.75rem !important;
+  }
+  
+  /* Stat cards spacing */
+  .detail-stats-grid {
+    gap: 8px !important;
+  }
+  
+  .detail-stat-card {
+    padding: 12px !important;
+  }
+  
+  /* Chart controls */
+  .chart-controls-section {
+    padding: 0 1rem !important;
+  }
+}
+
+/* Very small mobile - 2 options per row */
+@media (max-width: 480px) {
+  .heatmap-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+  
+  .heatmap-cell {
+    padding: 6px 4px !important;
+  }
+  
+  .heatmap-strike {
+    font-size: 0.625rem !important;
+  }
+  
+  .heatmap-risk {
+    font-size: 0.875rem !important;
+  }
+  
+  .heatmap-price {
+    font-size: 0.6875rem !important;
+  }
+}

@@ -126,10 +126,10 @@ const ChartBuilder = ({ data, range = "1D" }) => {
           <LineChart
             data={data}
             margin={{
-              top: 10,
-              right: hasRightAxis ? 70 : 20,
-              left: 70,
-              bottom: 10,
+              top: 0,
+              right: hasRightAxis ? 40 : 5,
+              left: hasLeftAxis ? 40 : 5,
+              bottom: 0,
             }}
           >
             <CartesianGrid

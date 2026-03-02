@@ -45,9 +45,9 @@ const Overview = () => {
             <h1 className="header-title">Options Risk Monitor</h1>
             <div className="header-controls">
               <EmailAlerts />
-              <div className="status-badge">
+              {/* <div className="status-badge">
                 {timestamp ? formatTime(timestamp) : "--:--"}
-              </div>
+              </div> */}
               <div className="status-badge">
                 <span
                   className={`status-indicator ${isConnected ? "live" : "offline"}`}
