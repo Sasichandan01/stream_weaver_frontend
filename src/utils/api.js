@@ -40,7 +40,7 @@ export const fetchHistory = async (symbol, expiry, range, reqId) => {
 }
 
 export const checkHealth = async () => {
-  const response = await api.get('/api//health')
+  const response = await api.get('/api/health')
   return response.data
 }
 
