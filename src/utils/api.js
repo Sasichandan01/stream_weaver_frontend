@@ -1,7 +1,7 @@
 // src/utils/api.js
 import axios from 'axios'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL || 'https://riskmonitorapi2232.duckdns.org'
 
 // Change timeout from 10s to 5s:
 const api = axios.create({
