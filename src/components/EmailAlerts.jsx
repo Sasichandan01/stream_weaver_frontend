@@ -56,7 +56,7 @@ const EmailAlerts = () => {
 
     try {
       const response = await fetch(
-        "http://riskmonitorapi2232.duckdns.org/api/email-alert",
+        "https://riskmonitorapi2232.duckdns.org/api/email-alert",
         {
           method: "POST",
           headers: {
