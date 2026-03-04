@@ -55,13 +55,16 @@ const EmailAlerts = () => {
     console.log("Alert Configuration:", alertData);
 
     try {
-      const response = await fetch("http://localhost:8000/api/email-alert", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "http://riskmonitorapi2232.duckdns.org/api/email-alert",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(alertData),
         },
-        body: JSON.stringify(alertData),
-      });
+      );
 
       const data = await response.json();
 
